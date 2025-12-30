@@ -8,6 +8,7 @@ import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
+import reactor.core.publisher.Sinks;
 
 import java.awt.*;
 
@@ -15,12 +16,17 @@ import java.awt.*;
 @RequestMapping("/eventos")
 public class EventoController {
 
-    @Autowired
-    private EventoService eventoService;
+    private final EventoService eventoService;
+    private final Sinks.Many<EventoResponseDTO> eventosSink;
+
+    public EventoController(EventoService eventoService) {
+        this.eventoService = eventoService;
+        this.eventosSink = Sinks.many().multicast().onBackpressureBuffer();
+    }
 
     @GetMapping(produces = MediaType.TEXT_EVENT_STREAM_VALUE)
     public Flux<EventoResponseDTO> getAllEventos() {
-        return eventoService.getAllEventos();
+        return Flux.merge(eventoService.getAllEventos(), eventosSink.asFlux());
     }
 
     @GetMapping(value = "/{id}", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
@@ -36,7 +42,7 @@ public class EventoController {
             @PathVariable String tipo
     )
     {
-        return eventoService.getByTipo(tipo);
+        return Flux.merge(eventoService.getByTipo(tipo), eventosSink.asFlux());
     }
 
     @PostMapping
@@ -44,7 +50,8 @@ public class EventoController {
             @RequestBody EventoRequestDTO dto
     )
     {
-        return eventoService.createEvento(dto);
+        return eventoService.createEvento(dto)
+                .doOnSuccess(e -> eventosSink.tryEmitNext(e));
     }
 
     @PutMapping("/{id}")
@@ -53,7 +60,8 @@ public class EventoController {
             @RequestBody EventoRequestDTO dto
     )
     {
-        return eventoService.updateEvento(id, dto);
+        return eventoService.updateEvento(id, dto)
+                .doOnSuccess(e -> eventosSink.tryEmitNext(e));
     }
 
     @DeleteMapping("/{id}")
