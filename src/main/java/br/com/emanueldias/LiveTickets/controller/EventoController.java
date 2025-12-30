@@ -31,6 +31,14 @@ public class EventoController {
         return eventoService.getEventoById(id);
     }
 
+    @GetMapping(value = "/tipo/{tipo}", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
+    public Flux<EventoResponseDTO> getEventoByTipo(
+            @PathVariable String tipo
+    )
+    {
+        return eventoService.getByTipo(tipo);
+    }
+
     @PostMapping
     public Mono<EventoResponseDTO> createEvento(
             @RequestBody EventoRequestDTO dto

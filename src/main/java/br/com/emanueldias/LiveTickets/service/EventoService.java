@@ -2,6 +2,7 @@ package br.com.emanueldias.LiveTickets.service;
 
 import br.com.emanueldias.LiveTickets.dto.EventoRequestDTO;
 import br.com.emanueldias.LiveTickets.dto.EventoResponseDTO;
+import br.com.emanueldias.LiveTickets.model.TipoEvento;
 import br.com.emanueldias.LiveTickets.repository.EventoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -48,5 +49,11 @@ public class EventoService {
     public Mono<Void> deleteEventoById(Long id) {
         return eventoRepository.findById(id)
                 .flatMap(eventoRepository::delete);
+    }
+
+    public Flux<EventoResponseDTO> getByTipo(String tipo) {
+        TipoEvento tipoEvento = TipoEvento.valueOf(tipo.toUpperCase());
+        return eventoRepository.findByTipo(tipoEvento)
+                .map(EventoResponseDTO::toDto);
     }
 }
