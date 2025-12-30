@@ -52,4 +52,24 @@ public class Evento {
     public String getDescricao() {
         return descricao;
     }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public void setTipo(TipoEvento tipo) {
+        this.tipo = tipo;
+    }
+
+    public void setNome(String nome) {
+        this.nome = nome;
+    }
+
+    public void setData(LocalDate data) {
+        this.data = data;
+    }
+
+    public void setDescricao(String descricao) {
+        this.descricao = descricao;
+    }
 }
