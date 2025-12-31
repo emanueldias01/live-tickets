@@ -1,6 +1,5 @@
 package br.com.emanueldias.LiveTickets.repository;
 
-import br.com.emanueldias.LiveTickets.dto.IngressoResponseDTO;
 import br.com.emanueldias.LiveTickets.model.Ingresso;
 import org.springframework.data.r2dbc.repository.Query;
 import org.springframework.data.repository.reactive.ReactiveCrudRepository;

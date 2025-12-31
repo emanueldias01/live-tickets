@@ -2,6 +2,7 @@ package br.com.emanueldias.LiveTickets.controller;
 
 import br.com.emanueldias.LiveTickets.dto.EventoRequestDTO;
 import br.com.emanueldias.LiveTickets.dto.EventoResponseDTO;
+import br.com.emanueldias.LiveTickets.model.TipoEvento;
 import br.com.emanueldias.LiveTickets.service.EventoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
@@ -42,7 +43,8 @@ public class EventoController {
             @PathVariable String tipo
     )
     {
-        return Flux.merge(eventoService.getByTipo(tipo), eventosSink.asFlux());
+        return Flux.merge(eventoService.getByTipo(tipo), eventosSink.asFlux()
+                .filter(e -> e.tipoEvento() == TipoEvento.valueOf(tipo.toUpperCase())));
     }
 
     @PostMapping
